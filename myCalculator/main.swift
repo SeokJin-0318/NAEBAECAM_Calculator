@@ -72,12 +72,14 @@ class squareOperation: AbstractOperation
 
 class Calculator 
 {
-    var operation: AbstractOperation?       //
+    var operation: AbstractOperation?       // 부호 저장
     var inputNumber1: Double = 0
     var inputNumber2: Double = 0
     var accrueCalculate: Double = 0
     var isCalculated = false
-    init()
+    var isReset = false
+    
+    init()          // 왜 아무것도 넣지 않아도 될까요
     {
     }
     
@@ -98,18 +100,21 @@ class Calculator
                 inputNumber1 = accrueResult         // 기존 결과값을 inputNumber1에 삽입
             }
             
-            isCalculated == false ? print("계산을 종료하려면 stop을 입력하세요.") : print("계산을 종료하려면 stop을 입력하세요. 이전 결과 값 : [ \(accrueResult) ]")    // 기존 결과값이 있으면 기존 결과값 출력
+            isCalculated == false ? print("계산을 종료하려면 stop을 입력하세요.") : print("계산을 종료하려면 stop을, 계산 값을 초기화하려면 reset를 입력하세요. 이전 결과 값 : [ \(accrueResult) ]")    // 기존 결과값이 있으면 기존 결과값 출력
             print("부호를 입력하세요 (+, -, *, /, ** 중 하나) : ", terminator: "")
             guard let inputOperation = readLine() else { return }
             
-            // 사용자 입력에 따라 적절한 연산 객체를 생성
-            switch inputOperation
+            
+            switch inputOperation       // 사용자 입력에 따라 적절한 연산 객체를 생성
             {
             case "+":   self.operation = addOperation()
             case "-":   self.operation = subtractOperation()
             case "*":   self.operation = multiplyOperation()
             case "/":   self.operation = divideOperation()
             case "**":  self.operation = squareOperation()
+            case "reset":
+                isReset = true
+                accrueResult = 0
             case "stop":
                 print("계산기 종료")
                 return
@@ -118,14 +123,18 @@ class Calculator
                 return
             }
             
-            print("두 번째 숫자 값을 입력하세요 : ", terminator: "")
-            guard let inputNum2 = readLine(), let number2 = Double(inputNum2) else { return }
-            self.inputNumber2 = number2
+            if isReset == false
+            {
+                print("두 번째 숫자 값을 입력하세요 : ", terminator: "")
+                guard let inputNum2 = readLine(), let number2 = Double(inputNum2) else { return }
+                self.inputNumber2 = number2
+            }
             
             accrueResult = calculate()
             
             print("결과는 \(accrueResult) 입니다")
             isCalculated = true
+            isReset = false
         }
             
             
