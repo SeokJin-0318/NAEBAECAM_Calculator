@@ -75,7 +75,7 @@ class Calculator
     var operation: AbstractOperation?       // 부호 저장
     var inputNumber1: Double = 0
     var inputNumber2: Double = 0
-    var accrueCalculate: Double = 0
+    var accrueResult: Double = 0
     var isCalculated = false
     var isReset = false
     
@@ -85,8 +85,6 @@ class Calculator
     
     func calculatorLoop()
     {
-        var accrueResult = calculator.accrueCalculate
-        
         while true
         {
             if isCalculated == false        // 기존 결과값이 있는지 확인
@@ -113,8 +111,8 @@ class Calculator
             case "/":   self.operation = divideOperation()
             case "**":  self.operation = squareOperation()
             case "reset":
-                isReset = true
                 accrueResult = 0
+                isReset = true
             case "stop":
                 print("계산기 종료")
                 return
@@ -128,13 +126,19 @@ class Calculator
                 print("두 번째 숫자 값을 입력하세요 : ", terminator: "")
                 guard let inputNum2 = readLine(), let number2 = Double(inputNum2) else { return }
                 self.inputNumber2 = number2
+                
+                
+                accrueResult = calculate()
+                
+                print("결과는 \(accrueResult) 입니다")
+                isCalculated = true
             }
-            
-            accrueResult = calculate()
-            
-            print("결과는 \(accrueResult) 입니다")
-            isCalculated = true
-            isReset = false
+            else
+            {
+                print("누적 계산 결과 0으로 초기화")
+                isReset = false
+                isCalculated = false
+            }
         }
             
             
