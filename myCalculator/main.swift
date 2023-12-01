@@ -75,51 +75,76 @@ class Calculator
     var operation: AbstractOperation?       //
     var inputNumber1: Double = 0
     var inputNumber2: Double = 0
-    
-    init() 
+    var accrueCalculate: Double = 0
+    var isCalculated = false
+    init()
     {
-        print("첫 번째 숫자 값을 입력하세요 : ", terminator: "")
-        guard let inputNum1 = readLine(), let number1 = Double(inputNum1) else { return }
-        self.inputNumber1 = number1
-                
-        print("부호를 입력하세요 (+, -, *, /, ** 중 하나) : ", terminator: "")
-        guard let inputOperation = readLine() else { return }
+    }
+    
+    func calculatorLoop()
+    {
+        var accrueResult = calculator.accrueCalculate
         
-        // 사용자 입력에 따라 적절한 연산 객체를 생성
-        switch inputOperation
+        while true
         {
+            if isCalculated == false        // 기존 결과값이 있는지 확인
+            {
+                print("첫 번째 숫자 값을 입력하세요 : ", terminator: "")
+                guard let inputNum1 = readLine(), let number1 = Double(inputNum1) else { return }
+                self.inputNumber1 = number1
+            }
+            else
+            {
+                inputNumber1 = accrueResult         // 기존 결과값을 inputNumber1에 삽입
+            }
+            
+            isCalculated == false ? print("계산을 종료하려면 stop을 입력하세요.") : print("계산을 종료하려면 stop을 입력하세요. 이전 결과 값 : [ \(accrueResult) ]")    // 기존 결과값이 있으면 기존 결과값 출력
+            print("부호를 입력하세요 (+, -, *, /, ** 중 하나) : ", terminator: "")
+            guard let inputOperation = readLine() else { return }
+            
+            // 사용자 입력에 따라 적절한 연산 객체를 생성
+            switch inputOperation
+            {
             case "+":   self.operation = addOperation()
             case "-":   self.operation = subtractOperation()
             case "*":   self.operation = multiplyOperation()
             case "/":   self.operation = divideOperation()
             case "**":  self.operation = squareOperation()
-            
+            case "stop":
+                print("계산기 종료")
+                return
             default:
-            print("유효하지 않은 부호입니다.")
-            return
+                print("유효하지 않은 부호입니다.")
+                return
+            }
+            
+            print("두 번째 숫자 값을 입력하세요 : ", terminator: "")
+            guard let inputNum2 = readLine(), let number2 = Double(inputNum2) else { return }
+            self.inputNumber2 = number2
+            
+            accrueResult = calculate()
+            
+            print("결과는 \(accrueResult) 입니다")
+            isCalculated = true
         }
-        
-        print("두 번째 숫자 값을 입력하세요 : ", terminator: "")
-        guard let inputNum2 = readLine(), let number2 = Double(inputNum2) else { return }
-        self.inputNumber2 = number2
-    }
-    
-    func calculate() -> Double      // 메소드 calculate 생성
-    {
-        guard let operation = operation         //
-        else
+            
+            
+
+        func calculate() -> Double      // 메소드 calculate 생성
         {
-            print("부호를 입력해야 합니다.")
-            return 0
+            guard let operation = operation         //
+            else
+            {
+                print("부호를 입력해야 합니다.")
+                return 0
+            }
+            
+            return operation.operate(firstNumber: inputNumber1, secondNumber: inputNumber2)     //
+            // 입력받은 inputNumber1, inputNumber2를 함수에 삽입
         }
-        
-        return operation.operate(firstNumber: inputNumber1, secondNumber: inputNumber2)     //
-                                        // 입력받은 inputNumber1, inputNumber2를 함수에 삽입
     }
 }
 
 let calculator = Calculator()       // Calculator 클래스의 인스턴스를 생성
 
-let printResult = calculator.calculate()
-
-print("결과는 \(printResult) 입니다")
+calculator.calculatorLoop()
